@@ -21,7 +21,7 @@ The project is designed to work with Gramine, a lightweight library OS that enab
 - `demo/`: Contains sample input and output for testing
 - `.github/workflows/`: CI/CD pipeline for building and releasing
 - `Dockerfile`: Defines the container image for the proof task
-- `python.manifest.template`: Gramine manifest template for secure execution
+- `my-proof.manifest.template`: Gramine manifest template for secure execution
 - `config.yaml`: Configuration file for Gramine Shielded Containers (GSC)
 
 ## Getting Started
@@ -35,11 +35,9 @@ To use this template:
 
 ## Customizing the Proof Logic
 
-The main proof logic is implemented in `my_proof/proof.py`. To customize it:
+The main proof logic is implemented in `my_proof/proof.py`. To customize it, update the `generate_proof` function to change how input files are processed.
 
-1. Modify the `expected_words` list to include the keywords you're looking for
-2. Adjust the `process_on_disk` and `process_in_memory` functions to implement your specific proof generation logic
-3. Update the `generate_proof` function if you need to change how input files are processed or results are written
+If you want to use a language other than Python, you can modify the Dockerfile to install the necessary dependencies and build the proof task in the desired language.
 
 ## Local Development
 
@@ -55,28 +53,6 @@ docker run \
 my-proof
 ```
 
-## Generating the Gramine Signing Key
-
-Before building and signing your graminized Docker image, you need to generate a signing key. Gramine provides a tool called `gramine-sgx-gen-private-key` for this purpose. Here's how to use it:
-
-1. If you have Gramine installed on your system, you can use the following command:
-
-   ```
-   gramine-sgx-gen-private-key enclave-key.pem
-   ```
-
-   This will generate a new RSA 3072 key suitable for signing SGX enclaves and save it as `enclave-key.pem` in the current directory.
-
-2. If you don't have Gramine installed, you can use OpenSSL to generate a compatible key:
-
-   ```
-   openssl genrsa -3 -out enclave-key.pem 3072
-   ```
-
-   This generates an RSA 3072-bit key with the public exponent set to 3, which is required for SGX enclaves.
-
-Make sure to keep this key secure, as it will be used to sign your enclaves. You'll use this key in the `gsc sign-image` step of the GSC workflow.
-
 ## Building and Releasing
 
 This template includes a GitHub Actions workflow that automatically:
@@ -85,10 +61,34 @@ This template includes a GitHub Actions workflow that automatically:
 2. Creates a Gramine-shielded container (GSC) image
 3. Publishes the GSC image as a GitHub release
 
-To use this workflow, you need to:
+**Important:** To use this workflow, you must generate a signing key and add it to your GitHub secrets. Follow these steps:
 
-1. Set up a signing key, as described above, and add it as a GitHub secret named `SIGNING_KEY`
-2. Push your changes to the `main` branch or create a pull request
+1. Generate a signing key (see instructions below)
+2. Add the key as a GitHub secret named `SIGNING_KEY`
+3. Push your changes to the `main` branch or create a pull request
+
+### Generating the Gramine Signing Key (Required)
+
+Before building and signing your graminized Docker image, you must generate a signing key. This key is crucial for creating secure SGX enclaves. Here's how to generate it:
+
+1. If you have Gramine installed:
+
+   ```
+   gramine-sgx-gen-private-key enclave-key.pem
+   ```
+
+2. If you don't have Gramine, use OpenSSL:
+
+   ```
+   openssl genrsa -3 -out enclave-key.pem 3072
+   ```
+
+After generating the key:
+
+1. Keep this key secure, as it will be used to sign your enclaves.
+2. Add the contents of `enclave-key.pem` as a GitHub secret named `SIGNING_KEY`.
+
+This key is essential for the `gsc sign-image` step in the GSC workflow.
 
 ## Running with SGX
 
