@@ -1,0 +1,26 @@
+# Adjust this as needed.
+sgx.enclave_size = "256M"
+
+# Increase this as needed, e.g., if you run a web server.
+sgx.max_threads = 2
+
+fs.mounts = [
+  { type = "encrypted", path = "/sealed", uri = "file:/sealed", key_name = "_sgx_mrenclave" },
+  { path = "/input", uri = "file:/input" },
+  { path = "/output", uri = "file:/output" },
+]
+
+# Gramine gives a warning that allowed_files is not safe in production, but it
+# should generally be fine for our use case which inherently assumes that input
+# files are untrusted until proven otherwise.
+#
+# Establishing a secure channel would be strong in that it would be harder for
+# malicious third parties to tamper with the files.
+sgx.allowed_files = [
+  "file:/input/",
+  "file:/output/",
+]
+
+# You can add other Gramine-manifest-compatible options as needed, see the
+# Gramine documentation for more details: https://gramine.readthedocs.io. Note
+# that gsc defines a number of manifest settings by default.
