@@ -37,6 +37,11 @@ To use this template:
 
 The main proof logic is implemented in `my_proof/proof.py`. To customize it, update the `generate_proof` function to change how input files are processed.
 
+The proof can be configured using environment variables:
+
+- `MY_PROOF_EXPECTED_WORDS`: Comma-separated list of words to search for in the input data (default: "hello,world")
+- `MY_PROOF_RANDOM_THRESHOLD`: Float value between 0 and 1 for the random number check threshold (default: 0.5)
+
 If you want to use a language other than Python, you can modify the Dockerfile to install the necessary dependencies and build the proof task in the desired language.
 
 ## Local Development
@@ -50,6 +55,8 @@ docker run \
 --volume $(pwd)/demo/sealed:/sealed \
 --volume $(pwd)/demo/input:/input \
 --volume $(pwd)/demo/output:/output \
+--env MY_PROOF_EXPECTED_WORDS=world \
+--env MY_PROOF_RANDOM_THRESHOLD=0.1 \
 my-proof
 ```
 
@@ -110,6 +117,8 @@ docker run \
 --device /dev/sgx_enclave:/dev/sgx_enclave \
 --volume /var/run/aesmd:/var/run/aesmd \
 --volume /mnt/gsc-my-proof/sealed:/sealed \
+--env MY_PROOF_EXPECTED_WORDS=world \
+--env MY_PROOF_RANDOM_THRESHOLD=0.1 \
 gsc-my-proof
 ```
 
