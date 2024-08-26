@@ -30,7 +30,7 @@ To use this template:
 
 1. Fork this repository
 2. Modify the `my_proof/proof.py` file to implement your specific proof logic
-3. Update the `python.manifest.template` if you need to add any additional files or change the configuration
+3. Update the `my-proof.manifest.template` if you need to add any additional files or change the configuration
 4. Commit your changes and push to your repository
 
 ## Customizing the Proof Logic
