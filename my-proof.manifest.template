@@ -2,7 +2,7 @@
 sgx.enclave_size = "256M"
 
 # Increase this as needed, e.g., if you run a web server.
-sgx.max_threads = 2
+sgx.max_threads = 4
 
 fs.mounts = [
   { type = "encrypted", path = "/sealed", uri = "file:/sealed", key_name = "_sgx_mrenclave" },
