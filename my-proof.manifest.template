@@ -10,6 +10,9 @@ fs.mounts = [
   { path = "/output", uri = "file:/output" },
 ]
 
+# Whitelist ENV variables that get passed to the enclave
+loader.env.USER_EMAIL = { passthrough = true }
+
 # Gramine gives a warning that allowed_files is not safe in production, but it
 # should generally be fine for our use case which inherently assumes that input
 # files are untrusted until proven otherwise.
