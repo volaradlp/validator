@@ -20,6 +20,7 @@ sgx.allowed_files = [
   "file:/input/",
   "file:/output/",
   "file:/etc/hosts",
+  "file:/etc/resolv.conf",
 ]
 
 # You can add other Gramine-manifest-compatible options as needed, see the
