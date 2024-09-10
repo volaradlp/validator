@@ -19,6 +19,7 @@ fs.mounts = [
 sgx.allowed_files = [
   "file:/input/",
   "file:/output/",
+  "file:/etc/hosts",
 ]
 
 # You can add other Gramine-manifest-compatible options as needed, see the
