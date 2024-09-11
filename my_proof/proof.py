@@ -20,18 +20,20 @@ class Proof:
         # Iterate through files and calculate data validity
         account_email = None
         total_score = 0
+
         for input_filename in os.listdir(self.config['input_dir']):
             input_file = os.path.join(self.config['input_dir'], input_filename)
-            with open(input_file, 'r') as f:
-                input_data = json.load(f)
+            if os.path.splitext(input_file)[1].lower() == '.json':
+                with open(input_file, 'r') as f:
+                    input_data = json.load(f)
 
-                if input_filename == 'account.json':
-                    account_email = input_data.get('email', None)
-                    continue
+                    if input_filename == 'account.json':
+                        account_email = input_data.get('email', None)
+                        continue
 
-                elif input_filename == 'activity.json':
-                    total_score = sum(item['score'] for item in input_data)
-                    continue
+                    elif input_filename == 'activity.json':
+                        total_score = sum(item['score'] for item in input_data)
+                        continue
 
         email_matches = self.config['user_email'] == account_email
         score_threshold = fetch_random_number()
