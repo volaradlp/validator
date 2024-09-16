@@ -1,17 +1,33 @@
 # Vana Satya Proof of Contribution - Python Template
 
-This repository serves as a template for creating proof of contribution tasks using Python and Gramine for secure computation.
+This repository serves as a template for creating a [proof of contribution](https://docs.vana.org/vana/core-concepts/key-elements/proof-of-contribution) tasks using Python. It is executed on Vana's Satya Network, a group of highly confidential and secure compute nodes that can validate data without revealing its contents to the node operator.
 
 ## Overview
 
 This template provides a basic structure for building proof tasks that:
 
-1. Read input files from the `/input` directory
-2. Process the data securely
-3. Write proof results to the `/output` directory
-4. Use the `/sealed` directory for secure storage (when available)
+1. Read input files from the `/input` directory.
+2. Process the data securely, running any necessary validations to prove the data authentic, unique, high quality, etc.
+3. Write proof results to the `/output/results.json` file in the following format:
 
-The project is designed to work with Gramine, a lightweight library OS that enables running unmodified applications in secure enclaves, such as Intel SGX (Software Guard Extensions). This allows the code to run in a trusted execution environment, ensuring confidentiality and integrity of the computation.
+```json
+{
+  "dlp_id": 1234, // DLP ID is found in the Root Network contract after the DLP is registered
+  "valid": false, // A single boolean to summarize if the file is considered valid in this DLP
+  "score": 0.7614457831325301, // A score between 0 and 1 for the file, used to determine how valuable the file is. This can be an aggregation of the individual scores below.
+  "authenticity": 1.0, // A score between 0 and 1 to rate if the file has been tampered with
+  "ownership": 1.0, // A score between 0 and 1 to verify the ownership of the file
+  "quality": 0.6024096385542169, // A score between 0 and 1 to show the quality of the file
+  "uniqueness": 0, // A score between 0 and 1 to show unique the file is, compared to others in the DLP
+  "attributes": { // Custom attributes that can be added to the proof to provide extra context about the encrypted file
+    "total_score": 0.5,
+    "score_threshold": 0.83,
+    "email_verified": true
+  }
+}
+```
+
+The project is designed to work with [Gramine](https://gramine.readthedocs.io/en/latest/), a lightweight library OS that enables running unmodified applications in secure enclaves, such as Intel SGX (Software Guard Extensions). This allows the code to run in a trusted execution environment, ensuring confidentiality and integrity of the computation.
 
 ## Project Structure
 
@@ -21,7 +37,7 @@ The project is designed to work with Gramine, a lightweight library OS that enab
 - `demo/`: Contains sample input and output for testing
 - `.github/workflows/`: CI/CD pipeline for building and releasing
 - `Dockerfile`: Defines the container image for the proof task
-- `my-proof.manifest.template`: Gramine manifest template for secure execution
+- `my-proof.manifest.template`: Gramine manifest template for running securely in an Intel SGX enclave
 - `config.yaml`: Configuration file for Gramine Shielded Containers (GSC)
 
 ## Getting Started
@@ -37,7 +53,7 @@ To use this template:
 
 The main proof logic is implemented in `my_proof/proof.py`. To customize it, update the `Proof.generate()` function to change how input files are processed.
 
-The proof can be configured using environment variables:
+The proof can be configured using environment variables. When running in an enclave, the environment variables must be defined in the `my-proof.manifest.template` file as well. The following environment variables are used for this demo proof:
 
 - `USER_EMAIL`: The email address of the data contributor, to verify data ownership
 
