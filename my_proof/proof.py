@@ -48,11 +48,16 @@ class Proof:
         self.proof_response.score = 0.6 * self.proof_response.quality + 0.4 * self.proof_response.ownership
         self.proof_response.valid = email_matches and total_score >= score_threshold
 
-        # Add additional metadata to the proof - these are public attributes about the data
+        # Additional (public) properties to include in the proof about the data
         self.proof_response.attributes = {
             'total_score': total_score,
             'score_threshold': score_threshold,
             'email_verified': email_matches,
+        }
+
+        # Additional metadata about the proof, written onchain
+        self.proof_response.metadata = {
+            'dlp_id': self.config['dlp_id'],
         }
 
         return self.proof_response
