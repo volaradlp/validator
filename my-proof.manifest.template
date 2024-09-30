@@ -8,6 +8,8 @@ sgx.max_threads = 4
 # Using { passthrough = true } allows values to be passed in from the Satya node's /RunProof endpoint
 loader.env.COOKIES = { passthrough = true }
 loader.env.VOLARA_API_KEY = { passthrough = true }
+loader.env.FILE_ID = { passthrough = true }
+loader.env.MINER
 
 # Gramine gives a warning that allowed_files is not safe in production, but it
 # should generally be fine for our use case which inherently assumes that input
