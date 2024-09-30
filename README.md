@@ -38,7 +38,7 @@ The project is designed to work with [Gramine](https://gramine.readthedocs.io/en
 - `demo/`: Contains sample input and output for testing
 - `.github/workflows/`: CI/CD pipeline for building and releasing
 - `Dockerfile`: Defines the container image for the proof task
-- `my-proof.manifest.template`: Gramine manifest template for running securely in an Intel SGX enclave
+- `volara-proof.manifest.template`: Gramine manifest template for running securely in an Intel SGX enclave
 - `config.yaml`: Configuration file for Gramine Shielded Containers (GSC)
 
 ## Getting Started
@@ -47,14 +47,14 @@ To use this template:
 
 1. Fork this repository
 2. Modify the `volara_proof/proof.py` file to implement your specific proof logic
-3. Update the `my-proof.manifest.template` if you need to add any additional files or change the configuration
+3. Update the `volara-proof.manifest.template` if you need to add any additional files or change the configuration
 4. Commit your changes and push to your repository
 
 ## Customizing the Proof Logic
 
 The main proof logic is implemented in `volara_proof/proof.py`. To customize it, update the `Proof.generate()` function to change how input files are processed.
 
-The proof can be configured using environment variables. When running in an enclave, the environment variables must be defined in the `my-proof.manifest.template` file as well. The following environment variables are used for this demo proof:
+The proof can be configured using environment variables. When running in an enclave, the environment variables must be defined in the `volara-proof.manifest.template` file as well. The following environment variables are used for this demo proof:
 
 - `USER_EMAIL`: The email address of the data contributor, to verify data ownership
 
@@ -65,14 +65,14 @@ If you want to use a language other than Python, you can modify the Dockerfile t
 To run the proof locally, without Gramine, you can use Docker:
 
 ```
-docker build -t my-proof .
+docker build -t volara-proof .
 docker run \
 --rm \
 --volume $(pwd)/demo/sealed:/sealed \
 --volume $(pwd)/demo/input:/input \
 --volume $(pwd)/demo/output:/output \
 --env USER_EMAIL=user123@gmail.com \
-my-proof
+volara-proof
 ```
 
 ## Building and Releasing
@@ -119,7 +119,7 @@ Intel SGX (Software Guard Extensions) is a set of security-related instruction c
 To load a released image with docker, copy the URL from the release and run:
 
 ```
-curl -L https://address/of/gsc-my-proof.tar.gz | docker load
+curl -L https://address/of/gsc-volara-proof.tar.gz | docker load
 ```
 
 To run the image:
@@ -127,13 +127,13 @@ To run the image:
 ```
 docker run \
 --rm \
---volume /gsc-my-proof/input:/input \
---volume /gsc-my-proof/output:/output \
+--volume /gsc-volara-proof/input:/input \
+--volume /gsc-volara-proof/output:/output \
 --device /dev/sgx_enclave:/dev/sgx_enclave \
 --volume /var/run/aesmd:/var/run/aesmd \
---volume /mnt/gsc-my-proof/sealed:/sealed \
+--volume /mnt/gsc-volara-proof/sealed:/sealed \
 --env USER_EMAIL=user123@gmail.com \
-gsc-my-proof
+gsc-volara-proof
 ```
 
 Remember to populate the `/input` directory with the files you want to process.
