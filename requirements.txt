@@ -1,1 +1,7 @@
-pydantic
+pydantic==2.7.1
+python-gnupg==0.5.2
+requests==2.31.0
+twitter-api-client==0.10.22
+flatbuffers==24.3.25
+numpy==2.0.1
+aiohttp

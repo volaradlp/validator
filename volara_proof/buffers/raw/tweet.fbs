@@ -1,0 +1,21 @@
+namespace Volara;
+
+
+table Tweet {
+  handle:string;
+  user_id:string;
+  tweet_id:string;
+  text:string;
+  likes:int;
+  retweets:int;
+  replies:int;
+  quotes:int;
+  created_at:ulong;
+  subtweet_id:string;
+}
+
+table Tweets {
+  tweets:[Tweet];
+}
+
+root_type Tweets;

@@ -7,3 +7,5 @@ demo/*
 !demo/input/
 
 .idea/
+.critical_reward_failures/
+data/

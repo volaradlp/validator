@@ -6,7 +6,8 @@ sgx.max_threads = 4
 
 # Whitelist ENV variables that get passed to the enclave
 # Using { passthrough = true } allows values to be passed in from the Satya node's /RunProof endpoint
-loader.env.USER_EMAIL = { passthrough = true }
+loader.env.COOKIES = { passthrough = true }
+loader.env.VOLARA_API_KEY = { passthrough = true }
 
 # Gramine gives a warning that allowed_files is not safe in production, but it
 # should generally be fine for our use case which inherently assumes that input

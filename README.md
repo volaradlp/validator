@@ -19,7 +19,8 @@ This template provides a basic structure for building proof tasks that:
   "ownership": 1.0, // A score between 0 and 1 to verify the ownership of the file
   "quality": 0.6024096385542169, // A score between 0 and 1 to show the quality of the file
   "uniqueness": 0, // A score between 0 and 1 to show unique the file is, compared to others in the DLP
-  "attributes": { // Custom attributes that can be added to the proof to provide extra context about the encrypted file
+  "attributes": {
+    // Custom attributes that can be added to the proof to provide extra context about the encrypted file
     "total_score": 0.5,
     "score_threshold": 0.83,
     "email_verified": true
@@ -31,7 +32,7 @@ The project is designed to work with [Gramine](https://gramine.readthedocs.io/en
 
 ## Project Structure
 
-- `my_proof/`: Contains the main proof logic
+- `volara_proof/`: Contains the main proof logic
   - `proof.py`: Implements the proof generation logic
   - `__main__.py`: Entry point for the proof execution
 - `demo/`: Contains sample input and output for testing
@@ -45,13 +46,13 @@ The project is designed to work with [Gramine](https://gramine.readthedocs.io/en
 To use this template:
 
 1. Fork this repository
-2. Modify the `my_proof/proof.py` file to implement your specific proof logic
+2. Modify the `volara_proof/proof.py` file to implement your specific proof logic
 3. Update the `my-proof.manifest.template` if you need to add any additional files or change the configuration
 4. Commit your changes and push to your repository
 
 ## Customizing the Proof Logic
 
-The main proof logic is implemented in `my_proof/proof.py`. To customize it, update the `Proof.generate()` function to change how input files are processed.
+The main proof logic is implemented in `volara_proof/proof.py`. To customize it, update the `Proof.generate()` function to change how input files are processed.
 
 The proof can be configured using environment variables. When running in an enclave, the environment variables must be defined in the `my-proof.manifest.template` file as well. The following environment variables are used for this demo proof:
 
