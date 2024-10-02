@@ -12,7 +12,7 @@ This template provides a basic structure for building proof tasks that:
 
 ```json
 {
-  "dlp_id": 1234, // DLP ID is found in the Root Network contract after the DLP is registered
+  "dlp_id": 19, // DLP ID is found in the Root Network contract after the DLP is registered
   "valid": false, // A single boolean to summarize if the file is considered valid in this DLP
   "score": 0.7614457831325301, // A score between 0 and 1 for the file, used to determine how valuable the file is. This can be an aggregation of the individual scores below.
   "authenticity": 1.0, // A score between 0 and 1 to rate if the file has been tampered with
