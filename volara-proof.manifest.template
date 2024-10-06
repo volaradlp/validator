@@ -1,8 +1,8 @@
 # Adjust this as needed.
-sgx.enclave_size = "512M"
+sgx.enclave_size = "256M"
 
 # Increase this as needed, e.g., if you run a web server.
-sgx.max_threads = 16
+sgx.max_threads = 8
 
 # Whitelist ENV variables that get passed to the enclave
 # Using { passthrough = true } allows values to be passed in from the Satya node's /RunProof endpoint
