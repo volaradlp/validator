@@ -1,6 +1,6 @@
-# Vana Satya Proof of Contribution - Python Template
+# Volara Satya Proof of Contribution
 
-This repository serves as a template for creating a [proof of contribution](https://docs.vana.org/vana/core-concepts/key-elements/proof-of-contribution) tasks using Python. It is executed on Vana's Satya Network, a group of highly confidential and secure compute nodes that can validate data without revealing its contents to the node operator.
+This repository provides proof of contribution using Satya validators for the Volara dataset on the Vana network.
 
 ## Overview
 
@@ -56,9 +56,7 @@ The main proof logic is implemented in `volara_proof/proof.py`. To customize it,
 
 The proof can be configured using environment variables. When running in an enclave, the environment variables must be defined in the `volara-proof.manifest.template` file as well. The following environment variables are used for this demo proof:
 
-- `USER_EMAIL`: The email address of the data contributor, to verify data ownership
-
-If you want to use a language other than Python, you can modify the Dockerfile to install the necessary dependencies and build the proof task in the desired language.
+- `COOKIES`: The cookies for the data contributor
 
 ## Local Development
 
@@ -146,10 +144,6 @@ This template leverages several security features:
 2. **Encrypted Storage**: The `/sealed` directory is automatically encrypted/decrypted by Gramine, providing secure storage for sensitive data.
 3. **Input/Output Isolation**: Input and output directories are mounted separately, ensuring clear data flow boundaries.
 4. **Minimal Attack Surface**: The Gramine manifest limits the files and resources accessible to the enclave, reducing potential vulnerabilities.
-
-## Customization
-
-Feel free to modify any part of this template to fit your specific needs. The goal is to provide a starting point that can be easily adapted to various proof tasks.
 
 ## Contributing
 
