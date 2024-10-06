@@ -37,16 +37,16 @@ NIL_RESPONSE_VALID = {
 }
 
 
-async def proof_of_quality(tweets_data: Tweets, file_id: str, config: ProofConfig):
+def proof_of_quality(tweets_data: Tweets, file_id: str, config: ProofConfig):
     if not _no_duplicates(tweets_data):
         return NIL_RESPONSE_INVALID
-    unique_tweets = await _unique_tweets(tweets_data, file_id)
+    unique_tweets = _unique_tweets(tweets_data, file_id)
     if len(unique_tweets) == 0:
         return NIL_RESPONSE_VALID
-    tweets_validated = await _validate_tweets(tweets_data, unique_tweets, config)
+    tweets_validated = _validate_tweets(tweets_data, unique_tweets, config)
     if not tweets_validated:
         return NIL_RESPONSE_INVALID
-    tweet_info = await _score_tweets(tweets_data, unique_tweets)
+    tweet_info = _score_tweets(tweets_data, unique_tweets)
     file_score = min(sum([tweet.score for tweet in tweet_info]) / 100_000, 1)
     return {
         "is_valid": True,
@@ -57,7 +57,7 @@ async def proof_of_quality(tweets_data: Tweets, file_id: str, config: ProofConfi
     }
 
 
-async def _validate_tweets(
+def _validate_tweets(
     tweets_data: Tweets, unique_tweets: T.Set[str], config: ProofConfig
 ):
     unique_tweet_data = [
@@ -71,7 +71,7 @@ async def _validate_tweets(
     tweet_sample = sample(range(len(unique_tweet_data)), sample_count)
 
     tweet_ids = [unique_tweet_data[i].TweetId().decode() for i in tweet_sample]
-    scraped_tweets = await _scrape_tweets(tweet_ids, config)
+    scraped_tweets = _scrape_tweets(tweet_ids, config)
 
     for tweet_data_i, tweet in zip(tweet_sample, scraped_tweets):
         if "result" not in tweet:  # Does this allow fake tweet attacks?
@@ -88,18 +88,11 @@ async def _validate_tweets(
     return True
 
 
-async def _scrape_tweets(
-    tweet_ids: list[str], config: ProofConfig
-) -> list[dict[str, T.Any]]:
+def _scrape_tweets(tweet_ids: list[str], config: ProofConfig) -> list[dict[str, T.Any]]:
     try:
-        operation = Operation.TweetResultsByRestIds
-        queries = list(batch_ids(tweet_ids))
-        keys, qid, name = operation
-        _queries = [{k: q} for q in queries for k, v in keys.items()]
         scraper = get_scraper(config)
-        scraped_tweets_raw = await scraper._process(operation, _queries)
-        scraped_tweets = scraped_tweets_raw[0][0].json()
-        tweets = scraped_tweets["data"]["tweetResult"]
+        scraped_tweets = scraper.tweets_by_ids(tweet_ids)
+        tweets = scraped_tweets[0]["data"]["tweetResult"]
         return tweets
     except Exception as e:
         logging.exception(
@@ -117,12 +110,12 @@ def _no_duplicates(tweets_data: Tweets) -> bool:
     return True
 
 
-async def _unique_tweets(tweets_data: Tweets, file_id: str) -> T.Set[str]:
+def _unique_tweets(tweets_data: Tweets, file_id: str) -> T.Set[str]:
     tweet_ids = [
         str(tweets_data.Tweets(i).TweetId().decode())
         for i in range(tweets_data.TweetsLength())
     ]
-    tweet_id_existance = await tweet_info_storage.get(tweet_ids, file_id)
+    tweet_id_existance = tweet_info_storage.get(tweet_ids, file_id)
     unique_tweets = set(
         [
             tweet_id
@@ -143,9 +136,7 @@ def _form_tweet_info(tweet: T.Optional[Tweet], score: float) -> TweetInfo:
     )
 
 
-async def _score_tweets(
-    tweets_data: Tweets, unique_tweets: T.Set[str]
-) -> list[TweetInfo]:
+def _score_tweets(tweets_data: Tweets, unique_tweets: T.Set[str]) -> list[TweetInfo]:
     # TODO: Evaluate dynamic score
     scored_tweets: list[TweetInfo] = []
     for i in range(tweets_data.TweetsLength()):

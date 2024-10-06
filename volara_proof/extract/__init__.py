@@ -2,7 +2,7 @@ import zipfile
 from volara_proof.buffers.tweets import Tweets
 
 
-async def extract_data(zip_file_path: str):
+def extract_data(zip_file_path: str):
     """
     Extracts the data from the zip file
     :param zip_file_path: Path to the zip file

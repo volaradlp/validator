@@ -10,13 +10,13 @@ from volara_proof.storage.rewards import RewardsStorage
 rewards_storage = RewardsStorage()
 
 
-async def proof(
+def proof(
     input_file: str, proof_response: ProofResponse, config: ProofConfig
 ) -> ProofResponse:
     proof_response = copy.deepcopy(proof_response)
-    tweets_data = await extract_data(input_file)
+    tweets_data = extract_data(input_file)
     is_valid, file_score, tweet_info, unique_tweets, total_tweets = (
-        await proof_of_quality(tweets_data, config.file_id, config)
+        proof_of_quality(tweets_data, config.file_id, config)
     ).values()
     proof_response.valid = is_valid
     proof_response.score = file_score
@@ -25,7 +25,7 @@ async def proof(
     proof_response.quality = file_score
     proof_response.uniqueness = unique_tweets / total_tweets if total_tweets > 0 else 0
     if is_valid and file_score > 0:
-        await rewards_storage.post_rewards(
+        rewards_storage.post_rewards(
             config.file_id, config.miner_address, file_score, tweet_info
         )
     return proof_response
