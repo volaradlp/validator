@@ -12,3 +12,4 @@ class ProofResponse(BaseModel):
     quality: float = 0.0
     uniqueness: float = 0.0
     attributes: Optional[Dict[str, Any]] = {}
+    metadata: Optional[Dict[str, Any]] = {}

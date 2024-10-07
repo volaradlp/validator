@@ -11,7 +11,9 @@ from volara_proof.models.proof_config import ProofConfig
 class Proof:
     def __init__(self, config: Dict[str, Any]):
         self.config = ProofConfig(**config)
-        self.proof_response = ProofResponse(dlp_id=config["dlp_id"])
+        self.proof_response = ProofResponse(
+            dlp_id=config["dlp_id"], metadata={"dlp_id": config["dlp_id"]}
+        )
 
     def generate(self) -> ProofResponse:
         """Generate proofs for all input files."""
