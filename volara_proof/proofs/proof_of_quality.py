@@ -9,13 +9,13 @@ from volara_proof.buffers.tweets import Tweets
 from volara_proof.buffers.tweet import Tweet
 from volara_proof.models.tweet_info import TweetInfo
 from volara_proof.storage.tweet_info import TweetInfoStorage
-from twitter.scraper import Scraper, Operation, batch_ids
 from volara_proof.models.proof_config import ProofConfig
+from volara_proof.scraper.VolaraScraper import VolaraScraper
 
 
 def get_scraper(config: ProofConfig):
     cookies = json.loads(config.cookies)
-    return Scraper(cookies=cookies)
+    return VolaraScraper(cookies=cookies)
 
 
 tweet_info_storage = TweetInfoStorage()
@@ -91,8 +91,7 @@ def _validate_tweets(
 def _scrape_tweets(tweet_ids: list[str], config: ProofConfig) -> list[dict[str, T.Any]]:
     try:
         scraper = get_scraper(config)
-        scraped_tweets = scraper.tweets_by_ids(tweet_ids)
-        tweets = scraped_tweets[0]["data"]["tweetResult"]
+        tweets = scraper.get_tweets_by_ids(tweet_ids)
         return tweets
     except Exception as e:
         logging.exception(
