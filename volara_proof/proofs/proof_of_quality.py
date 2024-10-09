@@ -83,7 +83,7 @@ def _validate_tweets(
             text = tweet["result"]["tweet"]["legacy"]["full_text"]
         else:
             text = tweet["result"]["legacy"]["full_text"]
-        if text != tweets_data.Tweets(tweet_data_i).Text().decode():
+        if text != unique_tweet_data[tweet_data_i].Text().decode():
             return False
     return True
 
