@@ -8,7 +8,7 @@ from typing import Dict, Any
 
 from volara_proof.proof import Proof
 
-INPUT_DIR, OUTPUT_DIR, SEALED_DIR = "/input", "/output", "/sealed"
+INPUT_DIR, OUTPUT_DIR = "./demo/input", "./demo/output"
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 
@@ -17,7 +17,6 @@ def load_config() -> Dict[str, Any]:
     """Load proof configuration from environment variables."""
     config = {
         "dlp_id": 19,  # Set your own DLP ID here
-        "use_sealing": os.path.isdir(SEALED_DIR),
         "input_dir": INPUT_DIR,
         "cookies": os.environ.get("COOKIES", None),
         "volara_api_key": os.environ.get("VOLARA_API_KEY", None),
