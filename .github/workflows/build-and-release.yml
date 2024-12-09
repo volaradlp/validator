@@ -1,112 +1,57 @@
-name: Build and Release
+build-and-release:
+  runs-on: ubuntu-latest
+  steps:
+    - uses: actions/checkout@v3
 
-on:
-  push:
-    branches: [main]
-  pull_request:
-    branches: [main]
+    - name: Set up Python
+      uses: actions/setup-python@v4
+      with:
+        python-version: "3.11"
 
-permissions:
-  contents: write
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v2
 
-jobs:
-  build-and-release:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
+    - name: Build Docker image
+      uses: docker/build-push-action@v4
+      with:
+        context: .
+        load: true
+        tags: |
+          volara-proof:${{ github.run_number }}
+          volara-proof:latest
+        cache-from: type=gha
+        cache-to: type=gha,mode=max
 
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: "3.11"
+    - name: Export image to file
+      run: |
+        docker save volara-proof:latest | gzip > volara-proof-${{ github.run_number }}.tar.gz
+    - name: Generate release body
+      run: |
+        echo "Image SHA256: $(sha256sum volara-proof-${{ github.run_number }}.tar.gz | cut -d' ' -f1)" >> release_body.txt
+    - name: Upload image
+      uses: actions/upload-artifact@v3
+      with:
+        name: volara-proof-image
+        path: volara-proof-${{ github.run_number }}.tar.gz
 
-      - name: Set up Docker Buildx
-        uses: docker/setup-buildx-action@v2
-
-      - name: Build Docker image
-        uses: docker/build-push-action@v4
-        with:
-          context: .
-          load: true
-          tags: |
-            volara-proof:${{ github.run_number }}
-            volara-proof:latest
-          cache-from: type=gha
-          cache-to: type=gha,mode=max
-
-      - name: Clone and set up GSC
-        run: |
-          git clone https://github.com/gramineproject/gsc.git
-          cd gsc
-          python3 -m pip install --no-cache-dir 'docker>=7.1.0' 'jinja2>=3.1.4' 'tomli>=2.0.1' 'tomli-w>=1.0.0' 'pyyaml>=6.0.2'
-
-      - name: Create signing key
-        run: |
-          echo "${{ secrets.SIGNING_KEY }}" > signing_key.pem
-          chmod 600 signing_key.pem
-
-      - name: Build GSC image
-        run: |
-          cd gsc
-          ./gsc build volara-proof ../volara-proof.manifest.template -c ../config.yaml
-
-      - name: Sign GSC image
-        run: |
-          cd gsc
-          ./gsc sign-image volara-proof ../signing_key.pem -c ../config.yaml
-
-      - name: Export GSC image to file
-        run: |
-          docker save gsc-volara-proof:latest | gzip > gsc-volara-proof-${{ github.run_number }}.tar.gz
-
-      - name: Generate verification data
-        run: |
-          cd gsc
-          ./gsc info-image gsc-volara-proof > ../sigstruct.txt
-
-      - name: Upload image
-        uses: actions/upload-artifact@v3
-        with:
-          name: gsc-volara-proof-image
-          path: gsc-volara-proof-${{ github.run_number }}.tar.gz
-
-      - name: Upload verification data
-        uses: actions/upload-artifact@v3
-        with:
-          name: gsc-volara-proof-sigstruct
-          path: sigstruct.txt
-
-      - name: Generate release body
-        run: |
-          echo "MRSIGNER: $(grep -oP 'mr_signer = "\K[^"]*' sigstruct.txt)" >> release_body.txt
-          echo "MRENCLAVE: $(grep -oP 'mr_enclave = "\K[^"]*' sigstruct.txt)" >> release_body.txt
-          echo "Image SHA256: $(sha256sum gsc-volara-proof-${{ github.run_number }}.tar.gz | cut -d' ' -f1)" >> release_body.txt
-
-      - name: Create Release and Upload Assets
-        uses: softprops/action-gh-release@v1
-        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: v${{ github.run_number }}
-          name: Release v${{ github.run_number }}
-          body_path: release_body.txt
-          draft: false
-          prerelease: false
-          files: |
-            ./gsc-volara-proof-${{ github.run_number }}.tar.gz
-            ./sigstruct.txt
-
-      - name: Cleanup signing key
-        if: always()
-        run: |
-          rm -f signing_key.pem
-
-      - name: Log build result
-        if: always()
-        run: |
-          if [ ${{ job.status }} == "success" ]; then
-            echo "Build and release completed successfully"
-          else
-            echo "Build and release failed"
-          fi
+    - name: Create Release and Upload Assets
+      uses: softprops/action-gh-release@v1
+      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+      env:
+        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      with:
+        tag_name: v${{ github.run_number }}
+        name: Release v${{ github.run_number }}
+        body_path: release_body.txt
+        draft: false
+        prerelease: false
+        files: |
+          ./volara-proof-${{ github.run_number }}.tar.gz
+    - name: Log build result
+      if: always()
+      run: |
+        if [ ${{ job.status }} == "success" ]; then
+          echo "Build and release completed successfully"
+        else
+          echo "Build and release failed"
+        fi
