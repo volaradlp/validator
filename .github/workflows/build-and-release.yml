@@ -1,57 +1,72 @@
-build-and-release:
-  runs-on: ubuntu-latest
-  steps:
-    - uses: actions/checkout@v3
+name: Build and Release
 
-    - name: Set up Python
-      uses: actions/setup-python@v4
-      with:
-        python-version: "3.11"
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
 
-    - name: Set up Docker Buildx
-      uses: docker/setup-buildx-action@v2
+permissions:
+  contents: write
 
-    - name: Build Docker image
-      uses: docker/build-push-action@v4
-      with:
-        context: .
-        load: true
-        tags: |
-          volara-proof:${{ github.run_number }}
-          volara-proof:latest
-        cache-from: type=gha
-        cache-to: type=gha,mode=max
+jobs:
+  build-and-release:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
 
-    - name: Export image to file
-      run: |
-        docker save volara-proof:latest | gzip > volara-proof-${{ github.run_number }}.tar.gz
-    - name: Generate release body
-      run: |
-        echo "Image SHA256: $(sha256sum volara-proof-${{ github.run_number }}.tar.gz | cut -d' ' -f1)" >> release_body.txt
-    - name: Upload image
-      uses: actions/upload-artifact@v3
-      with:
-        name: volara-proof-image
-        path: volara-proof-${{ github.run_number }}.tar.gz
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
 
-    - name: Create Release and Upload Assets
-      uses: softprops/action-gh-release@v1
-      if: github.event_name == 'push' && github.ref == 'refs/heads/main'
-      env:
-        GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-      with:
-        tag_name: v${{ github.run_number }}
-        name: Release v${{ github.run_number }}
-        body_path: release_body.txt
-        draft: false
-        prerelease: false
-        files: |
-          ./volara-proof-${{ github.run_number }}.tar.gz
-    - name: Log build result
-      if: always()
-      run: |
-        if [ ${{ job.status }} == "success" ]; then
-          echo "Build and release completed successfully"
-        else
-          echo "Build and release failed"
-        fi
+      - name: Set up Docker Buildx
+        uses: docker/setup-buildx-action@v2
+
+      - name: Build Docker image
+        uses: docker/build-push-action@v4
+        with:
+          context: .
+          load: true
+          tags: |
+            my-proof:${{ github.run_number }}
+            my-proof:latest
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Export image to file
+        run: |
+          docker save my-proof:latest | gzip > volara-${{ github.run_number }}.tar.gz
+
+      - name: Generate release body
+        run: |
+          echo "Image SHA256: $(sha256sum volara-${{ github.run_number }}.tar.gz | cut -d' ' -f1)" >> release_body.txt
+
+      - name: Upload image
+        uses: actions/upload-artifact@v3
+        with:
+          name: volara-image
+          path: volara-${{ github.run_number }}.tar.gz
+
+      - name: Create Release and Upload Assets
+        uses: softprops/action-gh-release@v1
+        if: github.event_name == 'push' && github.ref == 'refs/heads/main'
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: v${{ github.run_number }}
+          name: Release v${{ github.run_number }}
+          body_path: release_body.txt
+          draft: false
+          prerelease: false
+          files: |
+            ./volara-${{ github.run_number }}.tar.gz
+
+      - name: Log build result
+        if: always()
+        run: |
+          if [ ${{ job.status }} == "success" ]; then
+            echo "Build and release completed successfully"
+          else
+            echo "Build and release failed"
+          fi
