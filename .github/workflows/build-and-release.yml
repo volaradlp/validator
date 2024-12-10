@@ -29,24 +29,24 @@ jobs:
           context: .
           load: true
           tags: |
-            my-proof:${{ github.run_number }}
-            my-proof:latest
+            volara-proof:${{ github.run_number }}
+            volara-proof:latest
           cache-from: type=gha
           cache-to: type=gha,mode=max
 
       - name: Export image to file
         run: |
-          docker save my-proof:latest | gzip > volara-${{ github.run_number }}.tar.gz
+          docker save volara-proof:latest | gzip > volara-proof-${{ github.run_number }}.tar.gz
 
       - name: Generate release body
         run: |
-          echo "Image SHA256: $(sha256sum volara-${{ github.run_number }}.tar.gz | cut -d' ' -f1)" >> release_body.txt
+          echo "Image SHA256: $(sha256sum volara-proof-${{ github.run_number }}.tar.gz | cut -d' ' -f1)" >> release_body.txt
 
       - name: Upload image
         uses: actions/upload-artifact@v3
         with:
-          name: volara-image
-          path: volara-${{ github.run_number }}.tar.gz
+          name: volara-proof-image
+          path: volara-proof-${{ github.run_number }}.tar.gz
 
       - name: Create Release and Upload Assets
         uses: softprops/action-gh-release@v1
@@ -60,7 +60,7 @@ jobs:
           draft: false
           prerelease: false
           files: |
-            ./volara-${{ github.run_number }}.tar.gz
+            ./volara-proof-${{ github.run_number }}.tar.gz
 
       - name: Log build result
         if: always()
