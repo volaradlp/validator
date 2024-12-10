@@ -8,7 +8,7 @@ from typing import Dict, Any
 
 from volara_proof.proof import Proof
 
-INPUT_DIR, OUTPUT_DIR = "./demo/input", "./demo/output"
+INPUT_DIR, OUTPUT_DIR = "/input", "/output"
 
 logging.basicConfig(level=logging.INFO, format="%(message)s")
 
