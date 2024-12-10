@@ -16,7 +16,7 @@ logging.basicConfig(level=logging.INFO, format="%(message)s")
 def load_config() -> Dict[str, Any]:
     """Load proof configuration from environment variables."""
     config = {
-        "dlp_id": 19,  # Set your own DLP ID here
+        "dlp_id": 15,  # Set your own DLP ID here
         "input_dir": INPUT_DIR,
         "cookies": os.environ.get("COOKIES", None),
         "volara_api_key": os.environ.get("VOLARA_API_KEY", None),
