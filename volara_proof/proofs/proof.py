@@ -18,8 +18,8 @@ def proof(
     proof_response = copy.deepcopy(proof_response)
     user_data = extract_user_data(input_file)
     if user_data is not None:
-        proof_response.valid = True
         proof_response.score = 0
+        proof_response.valid = user_info_storage.verify_user(user_data)
         return proof_response
     tweets_data = extract_data(input_file)
     is_valid, file_score, tweet_info, unique_tweets, total_tweets = (
