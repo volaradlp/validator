@@ -1,5 +1,17 @@
 import zipfile
+import json
+from volara_proof.models.user_data import UserData
 from volara_proof.buffers.tweets import Tweets
+
+
+def extract_user_data(zip_file_path: str) -> UserData | None:
+    with zipfile.ZipFile(zip_file_path, "r") as zip_ref:
+        file_names = zip_ref.namelist()
+        if "user_data.json" in file_names:
+            with zip_ref.open("user_data.json", "r") as file:
+                return UserData(**json.load(file))
+        else:
+            return None
 
 
 def extract_data(zip_file_path: str):
