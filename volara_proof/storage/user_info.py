@@ -24,3 +24,20 @@ class UserInfoStorage:
         except Exception:
             logging.exception("[CRITICAL FAILURE] Failed to determine if user exists.")
             raise
+
+    def process_profile(self, user_info: UserData) -> None:
+        request_body = {
+            "walletAddress": user_info.wallet_address,
+        }
+        try:
+            resp = requests.post(
+                url=f"{VOLARA_API_URL}/v1/validator/profile-processed",
+                json=request_body,
+                headers={"Authorization": f"Bearer {os.environ['VOLARA_API_KEY']}"},
+            )
+            resp.raise_for_status()
+            logging.info("Succesfully processed profile.")
+            return resp.json()["userValidated"]
+        except Exception:
+            logging.exception("[CRITICAL FAILURE] Failed to process profile.")
+            raise
