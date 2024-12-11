@@ -37,7 +37,7 @@ class UserInfoStorage:
             )
             resp.raise_for_status()
             logging.info("Succesfully processed profile.")
-            return resp.json()["userValidated"]
+            return resp.json()
         except Exception:
             logging.exception("[CRITICAL FAILURE] Failed to process profile.")
             raise
