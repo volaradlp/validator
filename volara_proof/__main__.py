@@ -23,7 +23,6 @@ def load_config() -> Dict[str, Any]:
         "file_id": os.environ.get("FILE_ID", None),
         "miner_address": os.environ.get("MINER_ADDRESS", None),
     }
-    logging.info(f"Using config: {json.dumps(config, indent=2)}")
     return config
 
 
