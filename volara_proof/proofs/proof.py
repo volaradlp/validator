@@ -18,8 +18,9 @@ def proof(
     proof_response = copy.deepcopy(proof_response)
     user_data = extract_user_data(input_file)
     if user_data is not None:
-        proof_response.score = 0
-        proof_response.valid = user_info_storage.verify_user(user_data)
+        validated_user = user_info_storage.verify_user(user_data)
+        proof_response.score = 50 / 10_000 if validated_user else 0
+        proof_response.valid = validated_user
         user_info_storage.process_profile(user_data)
         return proof_response
     tweets_data = extract_data(input_file)
