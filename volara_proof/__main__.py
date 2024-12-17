@@ -33,7 +33,6 @@ def run() -> None:
 
     if not input_files_exist:
         raise FileNotFoundError(f"No input files found in {INPUT_DIR}")
-    extract_input()
 
     proof = Proof(config)
     proof_response = proof.generate()
@@ -42,19 +41,6 @@ def run() -> None:
     with open(output_path, "w") as f:
         json.dump(proof_response.dict(), f, indent=2)
     logging.info(f"Proof generation complete: {proof_response}")
-
-
-def extract_input() -> None:
-    """
-    If the input directory contains any zip files, extract them
-    :return:
-    """
-    for input_filename in os.listdir(INPUT_DIR):
-        input_file = os.path.join(INPUT_DIR, input_filename)
-
-        if zipfile.is_zipfile(input_file):
-            with zipfile.ZipFile(input_file, "r") as zip_ref:
-                zip_ref.extractall(INPUT_DIR)
 
 
 if __name__ == "__main__":
