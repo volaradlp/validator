@@ -30,6 +30,8 @@ def run() -> None:
     """Generate proofs for all input files."""
     config = load_config()
     input_files_exist = os.path.isdir(INPUT_DIR) and bool(os.listdir(INPUT_DIR))
+    print(os.listdir(INPUT_DIR))
+    print(os.environ)
 
     if not input_files_exist:
         raise FileNotFoundError(f"No input files found in {INPUT_DIR}")
