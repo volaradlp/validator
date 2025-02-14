@@ -3,10 +3,10 @@ import logging
 import os
 import sys
 import traceback
-import zipfile
 from typing import Dict, Any
 
 from volara_proof.proof import Proof
+from volara_proof.constants import VOLARA_DLP_OWNER_ADDRESS, VOLARA_DLP_OWNER_PUBLIC_KEY_HEX
 
 INPUT_DIR, OUTPUT_DIR = "/input", "/output"
 
@@ -25,13 +25,25 @@ def load_config() -> Dict[str, Any]:
     }
     return config
 
+def assess_validity(validated_permissions) -> bool:
+    """Assess the validity of a validated permission."""
+    for permission in validated_permissions:
+        if permission["address"] == VOLARA_DLP_OWNER_ADDRESS and permission["public_key"] == VOLARA_DLP_OWNER_PUBLIC_KEY_HEX:
+            return True
+    return False
+
 
 def run() -> None:
     """Generate proofs for all input files."""
     config = load_config()
     input_files_exist = os.path.isdir(INPUT_DIR) and bool(os.listdir(INPUT_DIR))
-    print(os.listdir(INPUT_DIR))
-    print(os.environ)
+    validated_permissions_str = os.environ.get("VALIDATED_PERMISSIONS", None)
+    if validated_permissions_str is None:
+        raise ValueError("VALIDATED_PERMISSIONS environment variable is not set")
+
+    validated_permissions = json.loads(validated_permissions_str)
+    if not assess_validity(validated_permissions):
+        raise ValueError("Permissions failed to validate")
 
     if not input_files_exist:
         raise FileNotFoundError(f"No input files found in {INPUT_DIR}")
