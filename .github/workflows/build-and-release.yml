@@ -43,7 +43,7 @@ jobs:
           echo "Image SHA256: $(sha256sum volara-proof-${{ github.run_number }}.tar.gz | cut -d' ' -f1)" >> release_body.txt
 
       - name: Upload image
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: volara-proof-image
           path: volara-proof-${{ github.run_number }}.tar.gz
